@@ -14,36 +14,27 @@ const webpush = require('web-push'),
           },
           TTL: 60 * 60
       };
+
 var subscriptions = [];
-
-app.use(bodyParser.json());
-
-
-app.use(express.static(root));
-app.use(fallback('index.html', { root: root }));
-
 
 app.post('/push/:title/:msg', (req, res) => {
     var title = req.params.title,
         msg = req.params.msg;
 
     subscriptions.forEach(subscriber => {
-        console.log(`Sending to ${subscriber.endpoint}...`);
         webpush.sendNotification(
             subscriber,
             JSON.stringify({title: title,
                             body: msg,
                             icon: '/images/coffee.png',
-                            badge: '/images/coffee-beans.png',
-                            vibrate: [200, 100, 200, 100, 200, 100, 200]
-                           }),
-            options).catch((err) => {
-                console.log('Error while pushing to [' + subscriber.endpoint + ']: ' + err.statusCode + ', ' + err.body);
-            });
+                            badge: '/images/coffee-beans.png' }),
+            options);
     });
     res.send(`Sent ${title}: ${msg}.`);
 });
 
+
+//var subscriptions = [];
 
 app.post('/registerSubscription', (req, res) => {
     subscriptions.push(req.body.subscription);
@@ -52,7 +43,8 @@ app.post('/registerSubscription', (req, res) => {
 
 app.post('/unregisterSubscription', (req, res) => {
     var subscriptionObject = req.body.subscription;
-    subscriptions = subscriptions.filter(el => el.endpoint !== subscriptionObject.endpoint);
+    subscriptions = subscriptions.filter(el =>
+        el.endpoint !== subscriptionObject.endpoint);
     res.status(200).send({success: true});
 });
 

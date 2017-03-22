@@ -6,7 +6,8 @@
 <dom-module id="push-activation">
   <template>
     <paper-icon-item on-tap="tapSubscribePush">
-      <iron-icon id="subscribeButton" icon="social:notifications" item-icon></iron-icon>
+      <iron-icon id="subscribeButton"
+                 icon="social:notifications" item-icon></iron-icon>
       Push Notifications
     </paper-icon-item>
   </template>
@@ -14,6 +15,11 @@
   <script>
     Polymer({
         is: 'push-activation',
+        tapSubscribePush: function() {
+            if (this.isSubscribed) { this.unsubscribeUser(); }
+            else { this.subscribeUser(); }
+        },
+        ...
 
         publicServerKey: 'BPOOvDThOUuSxiC-DuMv-WXG0XbSCwKR6Jux0CkyeyZ86OMF2U64VYKksNCJKoJdq1ISzYKfCUUxB6hKM0zeNGA',
         supportsPush: false,
